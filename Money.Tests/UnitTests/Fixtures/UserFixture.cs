@@ -1,11 +1,12 @@
-﻿using Money.Domain.DTOs.User;
+﻿using Money.Application.Common;
+using Money.Domain.DTOs.User;
 using Money.Domain.Entities;
 
 namespace Money.Tests.UnitTests.Fixtures
 {
     public static class UserFixture
     {
-        public static CreateUserDTO CreateUserDTO = new() { 
+        public static CreateUserDTO CreateUserDTO = new() {
             ConfirmPassword = "123123Jhon@",
             Password = "123123Jhon@",
             Name = "Jhon Doe",
@@ -44,7 +45,7 @@ namespace Money.Tests.UnitTests.Fixtures
             Email = "JhonDoe@email.com"
         };
 
-        public static UserDTO UserCreatedSuccessfully = new() { 
+        public static UserDTO UserCreatedSuccessfully = new() {
             Balance = 0,
             ExpectedBudget = 0,
             CreatedAt = DateTime.UtcNow,
@@ -56,7 +57,8 @@ namespace Money.Tests.UnitTests.Fixtures
             Transactions = new List<TransactionEntity>()
         };
 
-        public static UserEntity UserEntity = new() {
+        public static UserEntity UserEntity = new()
+        {
             Balance = 0,
             ExpectedBudget = 0,
             CreatedAt = DateTime.UtcNow,
@@ -67,7 +69,46 @@ namespace Money.Tests.UnitTests.Fixtures
             Picture = string.Empty,
             Transactions = new List<TransactionEntity>(),
             Indexes = new List<string>(),
+            Password = Hashing<UserEntity>.HashPassword(UserEntity, "123123Jhon@"),
+        };
+
+        public static UserEntity UserEntityWithWrongHashedPass = new()
+        {
+            Balance = 0,
+            ExpectedBudget = 0,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            Email = "JhonDoe@email.com",
+            Id = string.Empty,
+            Name = "Jhon Doe",
+            Picture = string.Empty,
+            Transactions = new List<TransactionEntity>(),
+            Indexes = new List<string>(),
+            Password = Hashing<UserEntity>.HashPassword(UserEntity, "testcase123")
+        };
+
+        public static LoginUserDTO LoginUserDTO = new() 
+        { 
+            Email = "Jhondoe@email.com",
             Password = "123123Jhon@"
+        };
+
+        public static LoginUserDTO LoginUserDTOWithInvalidEmail = new()
+        {
+            Email = "Jhondoe.com",
+            Password = "123123Jhon@"
+        };
+
+        public static LoginUserDTO LoginUserDTOWithInvalidPassword = new()
+        {
+            Email = "Jhondoe@email.com",
+            Password = "justjhon"
+        };
+
+        public static LoginUserDTO LoginUserDTOWithDifferentPassword = new()
+        {
+            Email = "Jhondoe@email.com",
+            Password = "123123Jhon@D"
         };
     }
 }

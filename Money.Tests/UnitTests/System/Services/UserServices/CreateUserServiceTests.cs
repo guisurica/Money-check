@@ -10,7 +10,7 @@ using Moq;
 
 namespace Money.Tests.UnitTests.System.Services.UserServices
 {
-    public class UserServiceTests
+    public class CreateUserServiceTests
     {
         [Fact]
         public async Task CreateUserWithSuccessReturn200Ok()

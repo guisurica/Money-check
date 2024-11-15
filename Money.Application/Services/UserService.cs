@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Money.Application.Common;
 using Money.Domain.Contracts.Repositories;
 using Money.Domain.Contracts.Services;
@@ -61,6 +62,28 @@ namespace Money.Application.Services
             var userDTO = _mapper.Map<UserDTO>(userReturned);
 
             return new Result<UserDTO>().Success("user created successfully", userDTO, 200);
+        }
+
+
+        public async Task<Result<UserDTO>> Login(LoginUserDTO input)
+        {
+            if (!EmailChecker.Check(TextCleaner.RemoveWhiteSpaces(input.Email)) || string.IsNullOrEmpty(input.Email))
+                return new Result<UserDTO>().Failure("Email invalid", 400);
+
+            if (!PasswordStrengthChecker.PasswordValidation(input.Password, out string message) || string.IsNullOrEmpty(input.Password))
+                return new Result<UserDTO>().Failure("Password invalid", 400);
+
+            var userFounded = await _userRepository.GetByEmail(input.Email);
+
+            if (userFounded == null)
+                return new Result<UserDTO>().Failure("User not found. Consider create a new account", 404);
+
+            if (Hashing<UserEntity>.VerifyHashedPassword(userFounded, userFounded.Password, input.Password) == PasswordVerificationResult.Failed)
+                return new Result<UserDTO>().Failure("Password invalid", 400);
+
+            var userDTO = _mapper.Map<UserDTO>(userFounded);
+
+            return new Result<UserDTO>().Success("User logged successfully.", userDTO, 200);
         }
 
         public Task<Result<bool>> Delete(string id)
